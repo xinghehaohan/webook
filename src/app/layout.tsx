@@ -16,14 +16,19 @@ export const viewport: Viewport = {
   initialScale: 1,
   viewportFit: 'cover',
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#bfeeff' },
-    { media: '(prefers-color-scheme: dark)', color: '#15262d' },
+    { media: '(prefers-color-scheme: light)', color: '#168fd8' },
+    { media: '(prefers-color-scheme: dark)', color: '#0f6fa7' },
   ],
 }
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="zh-CN" suppressHydrationWarning>
+      <head>
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+      </head>
       <body>
         <StoreHydrate>
           <AppShell>{children}</AppShell>

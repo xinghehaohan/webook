@@ -1,4 +1,4 @@
-const CACHE = 'pagesprout-shell-v2'
+const CACHE = 'pagesprout-shell-v3'
 const SHELL = ['/', '/margins', '/library', '/me', '/manifest.webmanifest', '/icon-192.png', '/icon-512.png']
 
 self.addEventListener('install', (event) => {

@@ -25,9 +25,11 @@ export function ProfileScreen() {
     await clearAllLocalData(); reset(); window.location.reload()
   }
   return <div className="standard-screen profile-page">
-    <div className="profile-scene">
+    <div className="page-scene snowy-page-scene" aria-hidden="true">
       <Image className="season-scene-image snowy-scene-image" src="/scenes/snowy-house.png" alt="" fill priority sizes="(max-width: 430px) 100vw, 430px" />
       <div className="scene-scrim" aria-hidden="true" />
+    </div>
+    <div className="profile-scene">
       <header className="profile-hero"><div><span className="eyebrow">MY GARDEN</span><h1>我和页芽</h1><p>不是读了多少，而是留下了什么。</p></div><PageSprout compact /></header>
     </div>
     <section className="growth-card"><div className="growth-ring" style={{ '--growth': `${Math.min(100, growth * 7)}%` } as React.CSSProperties}><span>{growth}</span></div><div><span>页芽等级 · 正在长叶子</span><h2>你的思想花园有了 {Object.keys(favorites).length} 颗光点</h2><p>每收藏一个真正打动你的观点，页芽就会再长一点。</p></div></section>
