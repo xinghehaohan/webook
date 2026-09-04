@@ -13,6 +13,8 @@
 ### Task 1: Add the seasonal assets
 
 **Files:**
+- Read: `/var/folders/cc/9l5g43451bgftfs99kn_9qg40000gn/T/codex-clipboard-8d499572-c64c-4044-aec1-1f29bfcb4b6a.png` (sunny hillside)
+- Read: `/var/folders/cc/9l5g43451bgftfs99kn_9qg40000gn/T/codex-clipboard-afe67af9-f42f-4678-9b93-f67fba466960.png` (snowy house)
 - Create: `public/scenes/sunny-hillside.png`
 - Create: `public/scenes/snowy-house.png`
 
@@ -33,10 +35,12 @@
 
 **Files:**
 - Modify: `src/app/globals.css`
+- Modify: `public/sw.js`
 
 - [ ] Add mobile-first background-image, focal position, and controlled scene height rules.
 - [ ] Add gradient/scrim overlays behind headings and PageSprout.
 - [ ] Preserve existing paper surfaces, bottom navigation, reduced motion, and dark mode readability.
+- [ ] Add both scene assets to the service worker shell cache for offline PWA display.
 
 ### Task 4: Verify and publish
 
