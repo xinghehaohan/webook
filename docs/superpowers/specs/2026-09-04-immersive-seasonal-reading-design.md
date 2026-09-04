@@ -33,3 +33,4 @@ Turn the seasonal paintings into full-page environments, fix the visible mobile 
 - Lint and production build must pass.
 - Inspect Today and Profile at 390×844.
 - Confirm no horizontal overflow, artwork covers the full viewport, cards remain readable, and the mascot works in regular and compact modes.
+- The user has already authorized direct pushes to `main` so the existing Vercel integration rebuilds automatically.

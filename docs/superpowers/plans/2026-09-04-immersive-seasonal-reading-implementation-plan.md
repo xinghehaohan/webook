@@ -41,7 +41,7 @@
 - Modify: `src/app/globals.css`
 - Modify: `public/sw.js`
 
-- [ ] Preserve `viewportFit: 'cover'` and add explicit Apple capable/status-bar meta tags.
+- [ ] Preserve `viewportFit: 'cover'` and explicitly emit `apple-mobile-web-app-capable=yes` plus `apple-mobile-web-app-status-bar-style=black-translucent`.
 - [ ] Match `html`, `body`, manifest, and theme colors to the bright blue scene fallback.
 - [ ] Keep safe-area padding on interactive headers and bottom navigation, not the fixed scene layer.
 - [ ] Bump the service-worker cache version.
