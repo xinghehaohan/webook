@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server'
-import { requestIsSameOrigin, SESSION_COOKIE, sessionCookieOptions, UPGRADE_COOKIE } from '@/lib/auth/session'
+import { requestIsSameOrigin, SESSION_COOKIE, sessionCookieOptions, UPGRADE_COOKIE, WEREAD_KEY_COOKIE } from '@/lib/auth/session'
 import { fail, ok } from '@/lib/api/response'
 
 export async function POST(request: NextRequest) {
@@ -7,5 +7,6 @@ export async function POST(request: NextRequest) {
   const response = ok({ authenticated: false }, 200)
   response.cookies.set(SESSION_COOKIE, '', sessionCookieOptions(0))
   response.cookies.set(UPGRADE_COOKIE, '', sessionCookieOptions(0))
+  response.cookies.set(WEREAD_KEY_COOKIE, '', sessionCookieOptions(0))
   return response
 }

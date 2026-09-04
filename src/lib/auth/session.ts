@@ -1,8 +1,9 @@
-import { createHmac, timingSafeEqual } from 'node:crypto'
+import { createCipheriv, createDecipheriv, createHash, createHmac, randomBytes, timingSafeEqual } from 'node:crypto'
 import type { NextRequest } from 'next/server'
 
 export const SESSION_COOKIE = 'pagesprout_session'
 export const UPGRADE_COOKIE = 'pagesprout_upgrade'
+export const WEREAD_KEY_COOKIE = 'pagesprout_weread_key'
 export const SESSION_AGE = 7 * 24 * 60 * 60
 
 function secret(): string | undefined {
@@ -47,8 +48,32 @@ export function verifyUpgradeMarker(value?: string): boolean {
   return version === '1.0.4' && Boolean(givenSignature) && safeEqual(signature(version), givenSignature)
 }
 
-export function connectionNamespace(): string {
-  const key = process.env.WEREAD_API_KEY
+export function encryptWeReadKey(value: string): string {
+  const valueSecret = secret()
+  if (!valueSecret) throw new Error('SESSION_SECRET is required')
+  const iv = randomBytes(12)
+  const cipher = createCipheriv('aes-256-gcm', createHash('sha256').update(valueSecret).digest(), iv)
+  const encrypted = Buffer.concat([cipher.update(value, 'utf8'), cipher.final()])
+  return [iv, cipher.getAuthTag(), encrypted].map((part) => part.toString('base64url')).join('.')
+}
+
+export function decryptWeReadKey(value?: string): string | undefined {
+  const valueSecret = secret()
+  if (!value || !valueSecret) return undefined
+  try {
+    const [iv, tag, encrypted] = value.split('.').map((part) => Buffer.from(part, 'base64url'))
+    if (!iv || !tag || !encrypted) return undefined
+    const decipher = createDecipheriv('aes-256-gcm', createHash('sha256').update(valueSecret).digest(), iv)
+    decipher.setAuthTag(tag)
+    return Buffer.concat([decipher.update(encrypted), decipher.final()]).toString('utf8')
+  } catch { return undefined }
+}
+
+export function resolveWeReadKey(cookieValue?: string): string | undefined {
+  return decryptWeReadKey(cookieValue) || process.env.WEREAD_API_KEY
+}
+
+export function connectionNamespace(key = process.env.WEREAD_API_KEY): string {
   const valueSecret = secret()
   if (!key || !valueSecret) return 'demo'
   return createHmac('sha256', valueSecret).update(key).digest('hex').slice(0, 16)

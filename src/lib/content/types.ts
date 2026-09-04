@@ -54,6 +54,7 @@ export type ConnectionState = {
   requiresAccessToken: boolean
   namespace: string
   blocked?: string
+  configuredBy?: 'environment' | 'device'
 }
 
 export type ApiFailure = {

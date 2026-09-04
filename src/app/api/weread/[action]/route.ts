@@ -1,7 +1,7 @@
 import { cookies } from 'next/headers'
 import { NextRequest } from 'next/server'
 import { fail, ok } from '@/lib/api/response'
-import { createUpgradeMarker, requestIsSameOrigin, securityConfigured, SESSION_COOKIE, sessionCookieOptions, UPGRADE_COOKIE, verifySession, verifyUpgradeMarker } from '@/lib/auth/session'
+import { createUpgradeMarker, requestIsSameOrigin, resolveWeReadKey, securityConfigured, SESSION_COOKIE, sessionCookieOptions, UPGRADE_COOKIE, verifySession, verifyUpgradeMarker, WEREAD_KEY_COOKIE } from '@/lib/auth/session'
 import { callWeRead, GatewayError } from '@/lib/weread/gateway'
 import { actionSchemas, type ActionName } from '@/lib/weread/schemas'
 import { normalizeBookInfo, normalizeChapters, normalizeDiscovery, normalizeHighlights, normalizeOpinions, normalizeProgress, normalizeShelf } from '@/lib/weread/normalize'
@@ -25,6 +25,8 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
   const store = await cookies()
   if (process.env.NODE_ENV === 'production' && !verifySession(store.get(SESSION_COOKIE)?.value)) return fail('UNAUTHORIZED', '请先解锁你的页边。', 401)
   if (verifyUpgradeMarker(store.get(UPGRADE_COOKIE)?.value)) return fail('UPGRADE_REQUIRED', '微信读书 Skill 需要升级并重新部署后才能继续。', 409)
+  const key = resolveWeReadKey(store.get(WEREAD_KEY_COOKIE)?.value)
+  if (!key) return fail('KEY_MISSING', '请先在“我的”中连接微信读书 API Key。', 401)
   const { action: rawAction } = await params
   if (!ACTIONS.has(rawAction)) return fail('UNKNOWN_ACTION', '不支持这个微信读书操作。', 404)
   const action = rawAction as ActionName
@@ -38,7 +40,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
   if (!parsed.success) return fail('INVALID_REQUEST', '请求参数不正确。', 400)
   try {
     const value = parsed.data as Record<string, unknown>
-    const raw = await callWeRead(action, value, request.signal)
+    const raw = await callWeRead(action, value, request.signal, key)
     return ok(normalize(action, raw, value))
   } catch (error) {
     if (error instanceof GatewayError) {

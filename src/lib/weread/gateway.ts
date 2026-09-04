@@ -7,8 +7,8 @@ export class GatewayError extends Error {
   constructor(public code: string, message: string, public retryable: boolean, public upgrade = false) { super(message) }
 }
 
-export async function callWeRead(action: ActionName, value: Record<string, unknown>, signal?: AbortSignal): Promise<unknown> {
-  const key = process.env.WEREAD_API_KEY
+export async function callWeRead(action: ActionName, value: Record<string, unknown>, signal?: AbortSignal, suppliedKey?: string): Promise<unknown> {
+  const key = suppliedKey || process.env.WEREAD_API_KEY
   if (!key) throw new GatewayError('KEY_MISSING', '尚未配置微信读书 API Key。', false)
   const controller = new AbortController()
   const timeout = setTimeout(() => controller.abort(), 8000)

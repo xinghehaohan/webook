@@ -30,7 +30,7 @@ export function ProfileScreen() {
     <ConnectionCard connection={connection} onChanged={refresh} />
     <ReadingSettings />
     <InstallCard />
-    <section className="profile-card privacy-card"><div><h3>本地数据与隐私</h3><p>收藏和成长保存在这台设备。API Key 不进入浏览器。</p></div><button type="button" onClick={clear}>清除全部本地数据</button></section>
+    <section className="profile-card privacy-card"><div><h3>本地数据与隐私</h3><p>收藏和成长保存在这台设备。API Key 仅发送给本应用服务端与微信读书，不写入前端存储。</p></div><button type="button" onClick={clear}>清除全部本地数据</button></section>
     <div className="app-signature">页边 · PageSprout <span>v0.1</span></div>
   </div>
 }
