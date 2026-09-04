@@ -9,7 +9,7 @@ Turn the seasonal paintings into full-page environments, fix the visible mobile 
 - Today uses the sunny hillside painting as a fixed, full-viewport background.
 - Profile uses the snowy house painting in the same full-viewport treatment.
 - Backgrounds continue beneath the top and bottom safe areas.
-- iOS standalone metadata explicitly requests a translucent status bar; `html`, `body`, and theme colors match the artwork as a fallback for browser and Android chrome.
+- Viewport metadata explicitly keeps `viewport-fit=cover` and iOS standalone metadata requests `black-translucent`; `html`, `body`, and theme colors match the artwork as a fallback for browser and Android chrome.
 - Reading surfaces use translucent light glass with blur, a quiet border, and soft shadow. Long quotes remain more opaque than secondary cards for legibility.
 - The bottom tab bar becomes translucent and keeps its safe-area padding.
 
