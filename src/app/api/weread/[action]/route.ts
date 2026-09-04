@@ -1,7 +1,7 @@
 import { cookies } from 'next/headers'
 import { NextRequest } from 'next/server'
 import { fail, ok } from '@/lib/api/response'
-import { createUpgradeMarker, requestIsSameOrigin, resolveWeReadKey, securityConfigured, SESSION_COOKIE, sessionCookieOptions, UPGRADE_COOKIE, verifySession, verifyUpgradeMarker, WEREAD_KEY_COOKIE } from '@/lib/auth/session'
+import { accessProtectionEnabled, createUpgradeMarker, requestIsSameOrigin, resolveWeReadKey, securityConfigured, SESSION_COOKIE, sessionCookieOptions, UPGRADE_COOKIE, verifySession, verifyUpgradeMarker, WEREAD_KEY_COOKIE } from '@/lib/auth/session'
 import { callWeRead, GatewayError } from '@/lib/weread/gateway'
 import { actionSchemas, type ActionName } from '@/lib/weread/schemas'
 import { normalizeBookInfo, normalizeChapters, normalizeDiscovery, normalizeHighlights, normalizeOpinions, normalizeProgress, normalizeShelf } from '@/lib/weread/normalize'
@@ -23,7 +23,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
   if (!requestIsSameOrigin(request)) return fail('ORIGIN_FORBIDDEN', '请求来源不受信任。', 403)
   if (!securityConfigured()) return fail('SECURITY_NOT_CONFIGURED', '生产环境需要配置访问保护。', 503)
   const store = await cookies()
-  if (process.env.NODE_ENV === 'production' && !verifySession(store.get(SESSION_COOKIE)?.value)) return fail('UNAUTHORIZED', '请先解锁你的页边。', 401)
+  if (accessProtectionEnabled() && !verifySession(store.get(SESSION_COOKIE)?.value)) return fail('UNAUTHORIZED', '请先解锁你的页边。', 401)
   if (verifyUpgradeMarker(store.get(UPGRADE_COOKIE)?.value)) return fail('UPGRADE_REQUIRED', '微信读书 Skill 需要升级并重新部署后才能继续。', 409)
   const key = resolveWeReadKey(store.get(WEREAD_KEY_COOKIE)?.value)
   if (!key) return fail('KEY_MISSING', '请先在“我的”中连接微信读书 API Key。', 401)

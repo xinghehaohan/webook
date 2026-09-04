@@ -81,7 +81,11 @@ export function connectionNamespace(key = process.env.WEREAD_API_KEY): string {
 
 export function securityConfigured(): boolean {
   if (process.env.NODE_ENV === 'development') return true
-  return Boolean(process.env.APP_ACCESS_TOKEN && process.env.SESSION_SECRET)
+  return Boolean(process.env.SESSION_SECRET)
+}
+
+export function accessProtectionEnabled(): boolean {
+  return process.env.NODE_ENV === 'production' && Boolean(process.env.APP_ACCESS_TOKEN)
 }
 
 export function requestIsSameOrigin(request: NextRequest): boolean {

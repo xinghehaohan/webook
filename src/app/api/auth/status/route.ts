@@ -1,5 +1,5 @@
 import { cookies } from 'next/headers'
-import { connectionNamespace, decryptWeReadKey, resolveWeReadKey, securityConfigured, SESSION_COOKIE, UPGRADE_COOKIE, verifySession, verifyUpgradeMarker, WEREAD_KEY_COOKIE } from '@/lib/auth/session'
+import { accessProtectionEnabled, connectionNamespace, decryptWeReadKey, resolveWeReadKey, securityConfigured, SESSION_COOKIE, UPGRADE_COOKIE, verifySession, verifyUpgradeMarker, WEREAD_KEY_COOKIE } from '@/lib/auth/session'
 import { ok } from '@/lib/api/response'
 
 export async function GET() {
@@ -7,7 +7,7 @@ export async function GET() {
   const deviceKey = decryptWeReadKey(store.get(WEREAD_KEY_COOKIE)?.value)
   const key = resolveWeReadKey(store.get(WEREAD_KEY_COOKIE)?.value)
   const configured = Boolean(key)
-  const protectedProduction = process.env.NODE_ENV === 'production'
+  const protectedProduction = accessProtectionEnabled()
   const authenticated = !protectedProduction || (securityConfigured() && verifySession(store.get(SESSION_COOKIE)?.value))
   return ok({
     configured,
