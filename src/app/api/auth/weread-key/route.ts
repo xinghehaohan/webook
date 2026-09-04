@@ -3,7 +3,7 @@ import { NextRequest } from 'next/server'
 import { z } from 'zod'
 import { readJsonBody } from '@/lib/api/body'
 import { fail, ok } from '@/lib/api/response'
-import { accessProtectionEnabled, encryptWeReadKey, requestIsSameOrigin, securityConfigured, SESSION_COOKIE, sessionCookieOptions, UPGRADE_COOKIE, verifySession, WEREAD_KEY_COOKIE } from '@/lib/auth/session'
+import { accessProtectionEnabled, requestIsSameOrigin, securityConfigured, serializeWeReadKey, SESSION_COOKIE, sessionCookieOptions, UPGRADE_COOKIE, verifySession, WEREAD_KEY_COOKIE } from '@/lib/auth/session'
 import { callWeRead, GatewayError } from '@/lib/weread/gateway'
 
 const schema = z.object({ key: z.string().trim().min(8).max(512) })
@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
   try {
     await callWeRead('shelf', {}, request.signal, key)
     const response = ok({ connected: true })
-    response.cookies.set(WEREAD_KEY_COOKIE, encryptWeReadKey(key), sessionCookieOptions(30 * 24 * 60 * 60))
+    response.cookies.set(WEREAD_KEY_COOKIE, serializeWeReadKey(key), sessionCookieOptions(30 * 24 * 60 * 60))
     response.cookies.set(UPGRADE_COOKIE, '', sessionCookieOptions(0))
     return response
   } catch (error) {
