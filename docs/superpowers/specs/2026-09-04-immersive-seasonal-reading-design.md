@@ -16,9 +16,10 @@ Turn the seasonal paintings into full-page environments, fix the visible mobile 
 ## Mascot
 
 - Replace the CSS PageSprout body with one transparent PNG illustration.
-- Character: cute young girl sitting cross-legged and reading, warm expressive face, rounded storybook proportions, saturated coral/orange, turquoise, leaf green, and sunny yellow.
+- Character: cute young girl sitting cross-legged and reading, rendered as a light 2D hand-drawn storybook illustration rather than glossy 3D. Keep the liked sock palette and motif: leafy green socks, yellow leaf pattern, violet toes, with restrained coral and turquoise accents elsewhere.
 - No embedded text, logo, frame, watermark, or opaque background.
 - Keep the existing click interaction, growth star, speech bubble, compact mode, and accessible button label.
+- Today header date and title render in white with a restrained shadow over the painting.
 
 ## Implementation
 

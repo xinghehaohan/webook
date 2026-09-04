@@ -17,7 +17,7 @@
 - Modify: `src/components/page-sprout.tsx`
 - Modify: `src/app/globals.css`
 
-- [ ] Generate one transparent high-saturation storybook illustration of a cute girl sitting cross-legged and reading, with no text or watermark.
+- [ ] Generate one transparent high-saturation 2D hand-drawn storybook illustration of a cute girl sitting cross-legged and reading, preserving green socks, yellow leaf motifs, and violet toes, with no text or watermark.
 - [ ] Copy the final asset into `public/mascot/reading-girl.png`.
 - [ ] Replace the CSS face/body spans with Next Image while preserving click, speech, star, motion, compact mode, and the accessible button label.
 
@@ -32,6 +32,7 @@
 - [ ] Keep headers and all page content above the background in normal flow.
 - [ ] Convert the Today sheet, reading cards, Profile cards, stats, and bottom dock to translucent blurred surfaces; keep quote cards more opaque than secondary cards.
 - [ ] Verify headings and body text retain sufficient contrast.
+- [ ] Render the Today date and title in white with a subtle shadow.
 
 ### Task 3: Fix mobile cutout coverage
 
