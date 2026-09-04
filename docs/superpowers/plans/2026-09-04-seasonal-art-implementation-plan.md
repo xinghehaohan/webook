@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Integrate the two supplied paintings into Today and Profile as decorative seasonal scenes without reducing reading clarity.
+**Goal:** Integrate the two supplied paintings into Today and Profile as decorative seasonal scenes without reducing reading clarity, including full-bleed coverage behind mobile display cutouts.
 
 **Architecture:** Copy both user-provided images into the PWA's local `public/scenes` assets. Apply them through dedicated page classes and CSS pseudo-element overlays, keeping semantic content unchanged and all long-form reading on opaque paper surfaces.
 
@@ -39,6 +39,7 @@
 
 - [ ] Add mobile-first background-image, focal position, and controlled scene height rules.
 - [ ] Add gradient/scrim overlays behind headings and PageSprout.
+- [ ] Extend scene backgrounds behind the top safe area while offsetting interactive content with `env(safe-area-inset-top)`.
 - [ ] Preserve existing paper surfaces, bottom navigation, reduced motion, and dark mode readability.
 - [ ] Add both scene assets to the service worker shell cache for offline PWA display.
 
@@ -49,7 +50,7 @@
 
 - [ ] Run `npm run lint`; expect zero errors.
 - [ ] Run `npm run build`; expect a successful production build.
-- [ ] Inspect Today and Profile at 390×844; verify crop, contrast, and no horizontal overflow.
+- [ ] Inspect Today and Profile at 390×844 with a simulated safe-area inset; verify crop, contrast, and no horizontal overflow.
 - [ ] Commit the implementation and push `main` to trigger the existing Vercel deployment.
 
 Automated tests are intentionally omitted per the user's request; verification is lint, production build, and mobile visual inspection.

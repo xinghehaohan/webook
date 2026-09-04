@@ -13,6 +13,7 @@ Use the two supplied vertical paintings to make PageSprout feel more vivid and c
 - Reading cards and opinion threads keep their existing paper surfaces; artwork never sits directly behind long-form reading content.
 - Existing PageSprout character interaction remains visible above the Today artwork.
 - Images use `object-fit: cover` with mobile-first focal positions and responsive cropping.
+- Scene backgrounds extend behind iOS and Android display cutouts while headings remain inset by `env(safe-area-inset-top)`.
 - Motion is limited to the app's existing subtle animation behavior and respects reduced-motion settings.
 
 ## Scope
@@ -21,7 +22,7 @@ This is a visual integration only. It does not add theme settings, seasonal sche
 
 ## Verification
 
-- Check Today and Profile at a 390×844 viewport.
+- Check Today and Profile at a 390×844 viewport, including simulated safe-area padding.
 - Confirm header text contrast, no horizontal overflow, and clean cropping.
 - Run lint and production build.
 - Push `main` after verification so the existing Vercel integration rebuilds automatically.

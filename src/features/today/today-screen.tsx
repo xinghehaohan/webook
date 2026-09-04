@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { useCallback, useEffect, useState } from 'react'
 import { PageSprout } from '@/components/page-sprout'
 import { loadConnection, loadMarginCards } from '@/lib/content/repository'
@@ -43,7 +44,9 @@ export function TodayScreen() {
   const weekday = new Intl.DateTimeFormat('zh-CN', { weekday: 'long' }).format(new Date())
 
   return <div className="today-screen">
-    <div className="sky-header">
+    <div className="sky-header sunny-scene">
+      <Image className="season-scene-image sunny-scene-image" src="/scenes/sunny-hillside.png" alt="" fill priority sizes="(max-width: 430px) 100vw, 430px" />
+      <div className="scene-scrim" aria-hidden="true" />
       <header className="page-header"><div><span>{weekday} · 页边天气晴朗</span><h1>今天，从一句话开始</h1></div><button className="round-button" type="button" onClick={refresh} aria-label="刷新内容"><RefreshIcon /></button></header>
       <PageSprout />
     </div>
