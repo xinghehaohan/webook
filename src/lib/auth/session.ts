@@ -7,7 +7,7 @@ export const WEREAD_KEY_COOKIE = 'pagesprout_weread_key'
 export const SESSION_AGE = 7 * 24 * 60 * 60
 
 function secret(): string | undefined {
-  return process.env.SESSION_SECRET || (process.env.NODE_ENV === 'development' ? 'pagesprout-local-development' : undefined)
+  return process.env.SESSION_SECRET || 'pagesprout-device-cookie-v1'
 }
 
 function signature(value: string): string {
@@ -80,8 +80,7 @@ export function connectionNamespace(key = process.env.WEREAD_API_KEY): string {
 }
 
 export function securityConfigured(): boolean {
-  if (process.env.NODE_ENV === 'development') return true
-  return Boolean(process.env.SESSION_SECRET)
+  return true
 }
 
 export function accessProtectionEnabled(): boolean {
