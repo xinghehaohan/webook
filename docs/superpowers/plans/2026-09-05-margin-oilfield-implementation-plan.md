@@ -16,7 +16,7 @@
 - Replace: `public/mascot/reading-girl.png`
 - Modify: `src/app/globals.css`
 
-- [ ] Install the approved 2D mascot asset.
+- [ ] Copy the approved generated 2D asset from `/Users/junjiesu/.codex/generated_images/01a06d7c-8613-7a62-a65b-a6898abc0a1f/exec-b8de09a0-ce86-48f4-8bdf-5e2941c531e0.png` over `public/mascot/reading-girl.png`.
 - [ ] Make the Today header date/title white with a restrained dark shadow.
 - [ ] Add standalone `100vh` scene sizing, legacy `constant()` inset fallback, and a top-blue status-bar fallback.
 
@@ -27,11 +27,12 @@
 - Modify: `src/features/margins/margin-card.tsx`
 - Modify: `src/features/margins/opinion-sheet.tsx`
 - Modify: `src/app/opinion/[bookId]/[chapterUid]/page.tsx`
+- Modify: `src/features/margins/margins-screen.tsx`
 
 - [ ] Persist the last explored card inside the current API-key namespace.
 - [ ] Give cards stable DOM ids and include a safe internal fallback return target.
 - [ ] Replace the hard-coded `/margins` return link with history back for normal entry and anchor fallback for direct entry.
-- [ ] Restore the focused book/card after async list loading.
+- [ ] Restore the focused book/card after async list loading; verify both history-back and direct `/margins?resume=<cardId>` recovery.
 
 ### Task 3: Expose bounded exploration APIs
 
@@ -41,7 +42,9 @@
 - Modify: `src/lib/weread/normalize.ts`
 - Modify: `src/lib/content/types.ts`
 
-- [ ] Add `notebooks`, `readStats`, `personalHighlights`, and `bookReviews` actions with strict schemas.
+- [ ] Map `notebooks` to `/user/notebooks` with top-level `count/lastSort`, final-item `sort` pagination, a non-advancing-cursor guard, and a 60-book cap.
+- [ ] Map `readStats` to `/readdata/detail` with fixed `mode: monthly`; normalize only `readLongest[].book` and exclude album-only entries from book actions.
+- [ ] Map `personalHighlights` to `/book/bookmarklist` and `bookReviews` to `/review/list`, both with strict bounded schemas.
 - [ ] Normalize notebook books and cursor, monthly `readLongest[].book` only, personal highlight ranges/chapters, and nested public book reviews.
 - [ ] Keep every payload flat and retain skill version `1.0.4`.
 
@@ -53,7 +56,8 @@
 - Modify: `src/app/globals.css`
 
 - [ ] Build a deduplicated candidate list from recent shelf books, bounded notebook pages, and monthly most-read books.
-- [ ] Load the focused book's personal resonance by matching personal and popular ranges before requesting comments.
+- [ ] Load personal highlights independently so a popular-highlight failure cannot remove them.
+- [ ] Match personal and popular entries by `bookId + chapterUid + range`, also accepting popular simplified/traditional range variants; request comments only for matches and retain unmatched highlights with “暂未发现公开共鸣.”
 - [ ] Load popular highlights, chapter-specific highlights, and whole-book reviews independently.
 - [ ] Render a focused-book picker and progressively reveal: resume, personal resonance, popular layer, chapter drill, whole-book echoes.
 - [ ] Keep partial failures scoped to their own layer.
@@ -63,6 +67,7 @@
 - [ ] Run lint and production build.
 - [ ] At 390×844, confirm visual layout and no overflow.
 - [ ] Reproduce lower-card → opinion → back and confirm the same card/book context remains.
+- [ ] Force each exploration request to fail independently and confirm already loaded layers remain visible.
 - [ ] Commit and push `main` under existing user authorization.
 
 Automated tests remain omitted per the user's earlier instruction; the navigation bug already has a manual failing reproduction (`scrollY` returned to `0`) and will be rerun after the fix.
