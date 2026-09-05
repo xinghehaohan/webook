@@ -52,7 +52,7 @@
 
 **Files:**
 - Modify: `src/lib/content/repository.ts`
-- Replace: `src/features/margins/margins-screen.tsx`
+- Modify: `src/features/margins/margins-screen.tsx` while preserving Task 2 restoration behavior
 - Modify: `src/app/globals.css`
 
 - [ ] Build a deduplicated candidate list from recent shelf books, bounded notebook pages, and monthly most-read books.
