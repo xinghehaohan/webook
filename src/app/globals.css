@@ -17,7 +17,7 @@
 @media(min-width:700px){.app-shell{margin-top:18px;min-height:calc(100dvh - 36px);border-radius:38px 38px 0 0;border:7px solid rgba(41,52,59,.9);border-bottom:0}.bottom-dock{bottom:0;border-radius:0}.screen-content{min-height:calc(100dvh - 36px)}}
 
 /* Immersive seasonal scene */
-html,body{background:#168fd8}
+html,body,.app-shell{background:var(--page-chrome,#168fd8)}
 .today-screen,.profile-page{--paper:#f7faef;--ink:#29343b;--muted:#687970;--line:rgba(69,91,75,.16);position:relative;isolation:isolate;background:transparent}
 .page-scene{position:fixed;z-index:0;top:calc(-1 * env(safe-area-inset-top));bottom:auto;left:50%;width:min(100%,430px);height:calc(100dvh + env(safe-area-inset-top) + env(safe-area-inset-bottom));overflow:hidden;transform:translateX(-50%);pointer-events:none}
 .page-scene .season-scene-image{object-fit:cover}
