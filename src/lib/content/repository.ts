@@ -5,7 +5,7 @@ import { callAction, getConnection } from './client'
 import { mapLimit, mergeCandidateBooks } from './candidates'
 import { CACHE_POLICY } from './cache-policy'
 import { idbGet, idbSet } from '@/state/indexed-db'
-import type { BookSummary, ConnectionState, MarginCard, ShelfSnapshot } from './types'
+import type { BookEcho, BookSummary, ConnectionState, MarginCandidate, MarginCard, ShelfSnapshot } from './types'
 
 type HighlightsPayload = { cards: MarginCard[] }
 type OpinionGroup = { range: string; totalCount: number; opinions: MarginCard['opinions']; hasMore?: boolean; maxIdx?: number; synckey?: number }
@@ -152,4 +152,57 @@ export async function loadOpinions(card: MarginCard, signal?: AbortSignal) {
     reviews: [{ range: card.range, count: 20, maxIdx: 0, synckey: 0 }],
   }, signal)
   return result.groups.find((item) => item.range === card.range)?.opinions ?? []
+}
+
+export async function loadMarginCandidates(connection: ConnectionState, signal?: AbortSignal): Promise<MarginCandidate[]> {
+  if (!connection.configured) return DEMO_SHELF.books.map((book) => ({ ...book, sourceLabel: '最近读过' as const }))
+  const shelfPromise = loadShelf(connection, signal).catch(() => ({ books: [] } as Pick<ShelfSnapshot, 'books'>))
+  const notebooksPromise = (async () => {
+    const books: Array<BookSummary & { noteCount?: number; sort?: number }> = []
+    let lastSort: number | undefined
+    for (let page = 0; page < 3 && books.length < 60; page++) {
+      const result = await callAction<{ books: Array<BookSummary & { noteCount?: number; sort?: number }>; hasMore: boolean; lastSort: number }>('notebooks', { count: 20, ...(lastSort ? { lastSort } : {}) }, signal)
+      books.push(...result.books)
+      if (!result.hasMore || !result.lastSort || result.lastSort === lastSort) break
+      lastSort = result.lastSort
+    }
+    return books.slice(0, 60)
+  })().catch(() => [])
+  const statsPromise = callAction<{ books: Array<BookSummary & { readTime?: number }> }>('readStats', {}, signal).then((value) => value.books).catch(() => [])
+  const [shelf, notebooks, stats] = await Promise.all([shelfPromise, notebooksPromise, statsPromise])
+  const merged = new Map<string, MarginCandidate>()
+  for (const book of stats) if (book.bookId) merged.set(book.bookId, { ...book, sourceLabel: '本月读得久', readTime: book.readTime })
+  for (const book of notebooks) if (book.bookId) merged.set(book.bookId, { ...merged.get(book.bookId), ...book, sourceLabel: '有我的笔记', noteCount: book.noteCount })
+  for (const book of shelf.books) if (book.bookId) {
+    const previous = merged.get(book.bookId)
+    merged.set(book.bookId, { ...previous, ...book, sourceLabel: previous?.sourceLabel ?? '最近读过' })
+  }
+  return [...merged.values()].sort((a, b) => (b.readUpdateTime ?? 0) - (a.readUpdateTime ?? 0))
+}
+
+export async function loadBookPopular(connection: ConnectionState, book: BookSummary, signal?: AbortSignal, chapterUid = 0): Promise<MarginCard[]> {
+  if (!connection.configured) return DEMO_MARGINS.filter((card) => card.book.bookId === book.bookId)
+  const value = await callAction<HighlightsPayload>('highlights', { bookId: book.bookId, ...(chapterUid ? { chapterUid } : {}) }, signal)
+  const cards = value.cards.map((card) => ({ ...card, book: { ...card.book, ...book }, source: 'live' as const }))
+  return requestOpinionGroups(cards, signal)
+}
+
+export async function loadPersonalResonance(connection: ConnectionState, book: BookSummary, signal?: AbortSignal): Promise<MarginCard[]> {
+  if (!connection.configured) return []
+  const personal = await callAction<HighlightsPayload>('personalHighlights', { bookId: book.bookId }, signal)
+  let popular: MarginCard[] = []
+  try { popular = (await callAction<HighlightsPayload>('highlights', { bookId: book.bookId }, signal)).cards } catch { /* Personal highlights remain useful alone. */ }
+  const matched: MarginCard[] = []
+  const unmatched: MarginCard[] = []
+  for (const card of personal.cards) {
+    const publicCard = popular.find((item) => item.chapterUid === card.chapterUid && (item.range === card.range || item.alternateRanges?.includes(card.range)))
+    if (publicCard) matched.push({ ...card, book: { ...card.book, ...book }, highlightCount: publicCard.highlightCount, publicMatch: true })
+    else unmatched.push({ ...card, book: { ...card.book, ...book }, opinionStatus: 'loaded', publicMatch: false })
+  }
+  return [...await requestOpinionGroups(matched, signal), ...unmatched]
+}
+
+export async function loadBookEchoes(bookId: string, signal?: AbortSignal): Promise<BookEcho[]> {
+  const result = await callAction<{ reviews: BookEcho[] }>('bookReviews', { bookId, reviewListType: 0, count: 12, maxIdx: 0, synckey: 0 }, signal)
+  return result.reviews
 }

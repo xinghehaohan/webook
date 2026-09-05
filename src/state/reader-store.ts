@@ -9,23 +9,25 @@ type ReaderState = {
   namespace: string
   favorites: Record<string, MarginCard>
   seen: string[]
+  lastExploredCard?: MarginCard
   growth: number
   reducedMotion: boolean
   fontScale: number
   setHydrated: (value: boolean) => void
   setNamespace: (value: string) => void
-  hydrateSnapshot: (snapshot: Partial<Pick<ReaderState, 'favorites' | 'seen' | 'growth' | 'reducedMotion' | 'fontScale'>>) => void
+  hydrateSnapshot: (snapshot: Partial<Pick<ReaderState, 'favorites' | 'seen' | 'lastExploredCard' | 'growth' | 'reducedMotion' | 'fontScale'>>) => void
   toggleFavorite: (card: MarginCard) => void
   markSeen: (id: string) => void
+  rememberExploration: (card: MarginCard) => void
   setReducedMotion: (value: boolean) => void
   setFontScale: (value: number) => void
   reset: () => void
 }
 
-const defaults = { favorites: {}, seen: [], growth: 3, reducedMotion: false, fontScale: 1 }
+const defaults = { favorites: {}, seen: [], lastExploredCard: undefined, growth: 3, reducedMotion: false, fontScale: 1 }
 
 function persist(state: ReaderState) {
-  const data = { favorites: state.favorites, seen: state.seen, growth: state.growth, reducedMotion: state.reducedMotion, fontScale: state.fontScale }
+  const data = { favorites: state.favorites, seen: state.seen, lastExploredCard: state.lastExploredCard, growth: state.growth, reducedMotion: state.reducedMotion, fontScale: state.fontScale }
   void idbSet('meta', `${state.namespace}:ui`, data)
 }
 
@@ -51,6 +53,7 @@ export const useReaderStore = create<ReaderState>((set, get) => ({
     set({ seen: [...get().seen.slice(-199), id] })
     persist(get())
   },
+  rememberExploration: (lastExploredCard) => { set({ lastExploredCard }); persist(get()) },
   setReducedMotion: (reducedMotion) => { set({ reducedMotion }); persist(get()) },
   setFontScale: (fontScale) => { set({ fontScale }); persist(get()) },
   reset: () => set({ ...defaults, namespace: 'demo' }),

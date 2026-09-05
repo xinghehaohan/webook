@@ -4,7 +4,7 @@ import { fail, ok } from '@/lib/api/response'
 import { accessProtectionEnabled, createUpgradeMarker, requestIsSameOrigin, resolveWeReadKey, securityConfigured, SESSION_COOKIE, sessionCookieOptions, UPGRADE_COOKIE, verifySession, verifyUpgradeMarker, WEREAD_KEY_COOKIE } from '@/lib/auth/session'
 import { callWeRead, GatewayError } from '@/lib/weread/gateway'
 import { actionSchemas, type ActionName } from '@/lib/weread/schemas'
-import { normalizeBookInfo, normalizeChapters, normalizeDiscovery, normalizeHighlights, normalizeOpinions, normalizeProgress, normalizeShelf } from '@/lib/weread/normalize'
+import { normalizeBookInfo, normalizeBookReviews, normalizeChapters, normalizeDiscovery, normalizeHighlights, normalizeNotebooks, normalizeOpinions, normalizePersonalHighlights, normalizeProgress, normalizeReadStats, normalizeShelf } from '@/lib/weread/normalize'
 import { readJsonBody } from '@/lib/api/body'
 
 const ACTIONS = new Set(Object.keys(actionSchemas))
@@ -16,6 +16,10 @@ function normalize(action: ActionName, raw: unknown, value: Record<string, unkno
   if (action === 'opinions') return normalizeOpinions(raw)
   if (action === 'chapters') return normalizeChapters(raw)
   if (action === 'book') return normalizeBookInfo(raw)
+  if (action === 'notebooks') return normalizeNotebooks(raw)
+  if (action === 'readStats') return normalizeReadStats(raw)
+  if (action === 'personalHighlights') return normalizePersonalHighlights(raw, String(value.bookId))
+  if (action === 'bookReviews') return normalizeBookReviews(raw)
   return normalizeDiscovery(raw)
 }
 

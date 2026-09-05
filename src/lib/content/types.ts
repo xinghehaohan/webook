@@ -23,6 +23,8 @@ export type ReaderOpinion = {
   likes?: number
 }
 
+export type BookEcho = ReaderOpinion & { star?: number; isFinish?: boolean }
+
 export type MarginCard = {
   id: string
   bookmarkId?: string
@@ -30,6 +32,8 @@ export type MarginCard = {
   chapterUid: number
   chapterTitle?: string
   range: string
+  alternateRanges?: string[]
+  publicMatch?: boolean
   markText: string
   highlightCount: number
   opinionCount: number
@@ -38,6 +42,8 @@ export type MarginCard = {
   fetchedAt: number
   source: SourceMode
 }
+
+export type MarginCandidate = BookSummary & { sourceLabel: '最近读过' | '有我的笔记' | '本月读得久'; noteCount?: number; readTime?: number }
 
 export type ShelfSnapshot = {
   books: BookSummary[]

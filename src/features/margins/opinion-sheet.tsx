@@ -1,6 +1,6 @@
 'use client'
 
-import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 import { SourceBadge } from '@/components/source-badge'
 import { compactNumber, formatDate } from '@/lib/content/format'
@@ -11,9 +11,10 @@ import { HeartIcon } from '@/components/ui/icons'
 import { useReaderStore } from '@/state/reader-store'
 import { idbGet, idbSet } from '@/state/indexed-db'
 
-type Props = { bookId: string; chapterUid: number; range: string; bookmarkId?: string }
+type Props = { bookId: string; chapterUid: number; range: string; bookmarkId?: string; from?: string; cardId?: string }
 
-export function OpinionSheet({ bookId, chapterUid, range, bookmarkId }: Props) {
+export function OpinionSheet({ bookId, chapterUid, range, bookmarkId, from, cardId }: Props) {
+  const router = useRouter()
   const [card, setCard] = useState<MarginCard>()
   const [opinions, setOpinions] = useState<ReaderOpinion[]>([])
   const [loading, setLoading] = useState(true)
@@ -23,6 +24,12 @@ export function OpinionSheet({ bookId, chapterUid, range, bookmarkId }: Props) {
   const favorites = useReaderStore((state) => state.favorites)
   const toggleFavorite = useReaderStore((state) => state.toggleFavorite)
   const loadMoreController = useRef<AbortController | null>(null)
+  const fallbackPath = from?.startsWith('/') && !from.startsWith('//') ? from : '/margins'
+  const fallbackHref = `${fallbackPath}${fallbackPath.includes('?') ? '&' : '?'}resume=${encodeURIComponent(cardId ?? '')}#margin-${encodeURIComponent(cardId ?? '')}`
+  const goBack = () => {
+    if (document.referrer.startsWith(window.location.origin)) router.back()
+    else router.replace(fallbackHref)
+  }
   useEffect(() => {
     const controller = new AbortController()
     void Promise.resolve().then(async () => {
@@ -70,10 +77,10 @@ export function OpinionSheet({ bookId, chapterUid, range, bookmarkId }: Props) {
   }
 
   if (!card && loading) return <div className="opinion-loading">页芽正在翻回这一页…</div>
-  if (!card) return <div className="standard-screen"><Link href="/margins" className="back-button">‹</Link><div className="empty-card"><span>🍃</span><h2>这片页边暂时找不到了</h2><p>{message}</p></div></div>
+  if (!card) return <div className="standard-screen"><button type="button" onClick={goBack} className="back-button">‹</button><div className="empty-card"><span>🍃</span><h2>这片页边暂时找不到了</h2><p>{message}</p></div></div>
   const favorite = Boolean(favorites[card.id])
   return <div className="opinion-page">
-    <header className="opinion-nav"><Link href="/margins" className="back-button" aria-label="返回页边">‹</Link><div><span>观点深读</span><b>{opinions.length ? `${opinions.length} / ${card.opinionCount}` : '原文页边'}</b></div><button type="button" className={`icon-button${favorite ? ' saved' : ''}`} onClick={() => toggleFavorite(card)} aria-label="收藏"><HeartIcon filled={favorite} /></button></header>
+    <header className="opinion-nav"><button type="button" onClick={goBack} className="back-button" aria-label="返回页边">‹</button><div><span>观点深读</span><b>{opinions.length ? `${opinions.length} / ${card.opinionCount}` : '原文页边'}</b></div><button type="button" className={`icon-button${favorite ? ' saved' : ''}`} onClick={() => toggleFavorite(card)} aria-label="收藏"><HeartIcon filled={favorite} /></button></header>
     <section className="pinned-quote"><SourceBadge source={card.source} /><div className="book-source compact-source"><div className="book-cover-mini">{card.book.title.slice(0, 4)}</div><div><strong>《{card.book.title}》</strong><span>{card.chapterTitle || `章节 ${card.chapterUid}`}</span></div></div><blockquote>“<mark>{card.markText}</mark>”</blockquote><div className="margin-stats"><span><b>{compactNumber(card.highlightCount)} 人</b>标注</span><span><b>{compactNumber(card.opinionCount)} 个</b>想法</span></div></section>
     <section className="opinion-thread"><div className="thread-title"><div><span>READERS&apos; MARGINS</span><h2>大家在这里想到的</h2></div><i /></div>
       {loading && <p className="loading-copy">正在把观点放回原文旁边…</p>}
