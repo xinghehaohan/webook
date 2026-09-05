@@ -30,8 +30,8 @@ The focused book stays selected until the reader chooses another recent/noted/mo
 ## Data Sources
 
 - `/shelf/sync`: recently read books.
-- `/user/notebooks`: older books with personal highlights, thoughts, or bookmarks.
-- `/readdata/detail`: most-read books for the current month.
+- `/user/notebooks`: older books with personal highlights, thoughts, or bookmarks. Fetch bounded pages with `count` and the previous page's final `sort` as top-level `lastSort`; stop on `hasMore=0`, a non-advancing cursor, or 60 books.
+- `/readdata/detail`: most-read books for the current month using `mode: monthly`; accept only `readLongest[].book` entries and exclude album-only entries from book endpoints.
 - `/book/bookmarklist`: the user's highlight text and exact ranges.
 - `/book/readreviews`: public comments for those exact ranges.
 - `/book/bestbookmarks`: popular highlights globally or within a chosen chapter.
@@ -39,6 +39,8 @@ The focused book stays selected until the reader chooses another recent/noted/mo
 - `/review/list`: whole-book public reviews.
 
 Candidate lists are deduplicated by `bookId`. Partial API failures degrade one layer only and never erase already loaded layers.
+
+Personal ranges are not sent blindly to `/book/readreviews`: match `/book/bookmarklist` entries against `/book/bestbookmarks` by `bookId + chapterUid + range`, also accepting the popular item's simplified/traditional range variants. Request public comments only for matched ranges; unmatched personal highlights remain visible with an honest “暂未发现公开共鸣” state.
 
 ## Navigation State
 
