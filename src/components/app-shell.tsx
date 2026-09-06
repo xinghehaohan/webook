@@ -9,6 +9,7 @@ const ROUTE_CHROME = {
   today: { light: '#168fd8', dark: '#0f6fa7' },
   margins: { light: '#bcecff', dark: '#16435b' },
   library: { light: '#f5f9ee', dark: '#172823' },
+  reflection: { light: '#ffb691', dark: '#663f58' },
   profile: { light: '#68afd5', dark: '#16435b' },
   opinion: { light: '#f6f8f1', dark: '#172823' },
 } as const
@@ -16,6 +17,7 @@ const ROUTE_CHROME = {
 function chromeFor(pathname: string) {
   if (pathname.startsWith('/margins')) return ROUTE_CHROME.margins
   if (pathname.startsWith('/library')) return ROUTE_CHROME.library
+  if (pathname.startsWith('/reflect')) return ROUTE_CHROME.reflection
   if (pathname.startsWith('/me')) return ROUTE_CHROME.profile
   if (pathname.startsWith('/opinion')) return ROUTE_CHROME.opinion
   return ROUTE_CHROME.today

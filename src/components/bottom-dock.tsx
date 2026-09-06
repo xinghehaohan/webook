@@ -2,12 +2,13 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LibraryIcon, MarginsIcon, SunIcon, UserIcon } from './ui/icons'
+import { JournalIcon, LibraryIcon, MarginsIcon, SunIcon, UserIcon } from './ui/icons'
 
 const tabs = [
   { href: '/', label: '今天', Icon: SunIcon },
   { href: '/margins', label: '页边', Icon: MarginsIcon },
   { href: '/library', label: '书架', Icon: LibraryIcon },
+  { href: '/reflect', label: '心记', Icon: JournalIcon },
   { href: '/me', label: '我的', Icon: UserIcon },
 ]
 
